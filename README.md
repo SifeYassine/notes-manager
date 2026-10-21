@@ -2,6 +2,10 @@
 
 A personal **note-taking web app** built with **Laravel 11**, **Blade**, **Tailwind CSS**, and **Alpine.js**. Each user gets a private space to organize notes into categories, search them, and manage their account. Authentication is scaffolded with **Laravel Breeze**.
 
+![Notes](screenshots/notes.png)
+
+![Categories](screenshots/categories.png)
+
 ## Features
 
 - **Authentication** (Laravel Breeze): register, login, logout, password reset, email verification
