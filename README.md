@@ -1,98 +1,123 @@
-# Installation Guide
+# Notes Manager
 
-## Prerequisites
-Before you begin, ensure you have met the following requirements:
-- [Composer](https://getcomposer.org/download/) installed on your machine
-- [Node.js and npm](https://nodejs.org/) installed on your machine
+A personal **note-taking web app** built with **Laravel 11**, **Blade**, **Tailwind CSS**, and **Alpine.js**. Each user gets a private space to organize notes into categories, search them, and manage their account. Authentication is scaffolded with **Laravel Breeze**.
 
-## Cloning the Repository
-1. **Open your terminal.**
-2. **Navigate to the directory where you want to clone the repository:**
+## Features
 
-    ```bash
-    cd path/to/your/directory
-    ```
+- **Authentication** (Laravel Breeze): register, login, logout, password reset, email verification
+- **Profile management**: update name, email, and password, or delete the account
+- **Categories**: create, search, and delete your own categories
+- **Notes**: create, search, update, and delete notes, each assigned to a category
+- **Per-user data isolation**: users only ever see their own categories and notes
+- Cascade deletes: removing a category removes its notes
+- Responsive UI with Tailwind CSS and Alpine.js
 
-3. **Run the following command to clone the repository:**
+## Tech Stack
 
-    ```bash
-    git clone https://github.com/SifeYassine/NotesManager.git
-    ```
+| Layer     | Technology |
+| --------- | ---------- |
+| Backend   | PHP 8.2+, Laravel 11 |
+| Auth      | Laravel Breeze |
+| Frontend  | Blade templates, Tailwind CSS 3, Alpine.js |
+| Build     | Vite |
+| Database  | MySQL or SQLite |
 
-## Installing Dependencies
-1. **Install PHP dependencies using Composer:**
+## Data Model
 
-    ```bash
-    composer install
-    ```
+```
+User ──< Category ──< Note
+  └───────────────────<┘
+```
 
-2. **Install JavaScript dependencies using npm:**
+| Table        | Key fields |
+| ------------ | ---------- |
+| `categories` | `name`, `user_id` |
+| `notes`      | `title`, `content`, `user_id`, `category_id` |
 
-    ```bash
-    npm install
-    ```
-3. **Build the project:**
+## Project Structure (highlights)
 
-   ```bash
-    npm run build
-    ```    
+```
+app/Http/Controllers/
+├── CategoryController.php     # list/search, store, destroy
+├── NoteController.php         # list/search, store, update, destroy
+└── ProfileController.php
+resources/views/
+├── dashboard.blade.php        # Categories overview
+├── categories/index.blade.php
+├── notes/index.blade.php
+└── auth/, profile/, layouts/, components/   # Breeze scaffolding
+routes/web.php                 # Resource routes for categories & notes
+```
 
-## Setting Up Environment Variables
+## Getting Started
 
-1. **Open the `.env` file in a text editor and set up your database and other environment variables as needed:**
+### Prerequisites
 
-    ```env
-    APP_NAME=Laravel
-    APP_ENV=local
-    APP_KEY=base64:...
-    APP_DEBUG=true
-    APP_URL=http://localhost
+- PHP 8.2+ and [Composer](https://getcomposer.org/)
+- [Node.js](https://nodejs.org/) and npm
+- MySQL (or SQLite)
 
-    LOG_CHANNEL=stack
-    LOG_DEPRECATIONS_CHANNEL=null
-    LOG_LEVEL=debug
+### Installation
 
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=your_database
-    DB_USERNAME=your_username
-    DB_PASSWORD=your_password...
-    ```
+```bash
+git clone https://github.com/SifeYassine/notes-manager.git
+cd notes-manager
 
-## Generating Application Key
-1. **Generate the application key:**
+composer install
+npm install
 
-    ```bash
-    php artisan key:generate
-    ```
+cp .env.example .env
+php artisan key:generate
+```
 
-## Running Migrations and Seeders
-1. **Run the database migrations:**
+### Configure the database
 
-    ```bash
-    php artisan migrate
-    ```
+By default `.env.example` uses SQLite. To use MySQL instead:
 
-2. **(Optional) Run the database seeders:**
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=notes_manager
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-    ```bash
-    php artisan db:seed
-    ```
+### Migrate and seed
 
-## Serving the Application
-1. **Serve the application locally:**
+```bash
+php artisan migrate
+php artisan db:seed    # optional: creates a test user (test@example.com / password)
+```
 
-    ```bash
-    php artisan serve
-    ```
+### Run
 
-2. **Open your browser and navigate to the following URL:**
+Run the frontend build and the Laravel server in two terminals:
 
-    ```
-    http://127.0.0.1:8080
-    ```
-    
-If you encounter any issues, please refer to the [Laravel Documentation](https://laravel.com/docs) or open an issue in the repository.
+```bash
+npm run dev
+```
 
-Happy coding!
+```bash
+php artisan serve
+```
+
+Open <http://127.0.0.1:8000>, register an account, and start organizing your notes.
+
+## Routes
+
+| Method | URI                   | Action |
+| ------ | --------------------- | ------ |
+| GET    | `/dashboard`          | Categories overview (auth) |
+| GET    | `/categories`         | List / search categories |
+| POST   | `/categories`         | Create a category |
+| DELETE | `/categories/{id}`    | Delete a category |
+| GET    | `/notes`              | List / search notes |
+| POST   | `/notes`              | Create a note |
+| PUT    | `/notes/{id}`         | Update a note |
+| DELETE | `/notes/{id}`         | Delete a note |
+| GET/PATCH/DELETE | `/profile`  | Manage profile |
+
+## Author
+
+**Sifeddine Yassine** · [@SifeYassine](https://github.com/SifeYassine)
